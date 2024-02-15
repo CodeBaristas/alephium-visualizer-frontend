@@ -330,14 +330,15 @@ const BlockchainVisualizer = () => {
     //     console.log(JSON.stringify(ex));
     //   }
 
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {
       const response = JSON.parse(event.data);
-      console.log(response);
+      console.log("res", response);
 
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
           const blocks: IBlockMessage[] = response.request.arguments.data;
           console.log(response);
+
           // Calculate block position
           blocks.forEach((block) => {
             logMessage(`New block found: ${block.hash}`);
@@ -349,6 +350,25 @@ const BlockchainVisualizer = () => {
               circleRadius,
               (block.timestamp % 10000) / 10000, // Using your provided formula
             );
+
+            const call_id = response?.request?.call_id;
+            console.log("call_id", call_id);
+            console.log(`request: ${JSON.stringify(response)}`);
+
+            try {
+              const notify = {
+                response: {
+                  result: "None",
+                  result_type: "None",
+                  call_id: call_id,
+                },
+              };
+
+              console.log(`NOTIFYING ${JSON.stringify(notify)}`);
+              ws?.send(JSON.stringify(notify));
+            } catch (ex) {
+              console.log(JSON.stringify(ex));
+            }
 
             // If the block group origin and destination are equal -> New "Lead" Block for that group detected
             if (block.chainFrom === block.chainTo) {
