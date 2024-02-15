@@ -24,9 +24,11 @@ import { calcCubePosition, calculateSection } from "@/utils/calcPositions";
 import AlephiumModel from "@/components/Models/AlephiumModel";
 import * as THREE from "three";
 import AlphlandModel from "@/components/Models/AlphlandModel";
+import io from "socket.io-client";
 
 import { circleRadius, totalChains, totalGroups } from "@/consts";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import PubSub from "pubsub-js";
 
 import { ScrollShadow } from "@nextui-org/react";
 import MenuePopver from "@/components/MenuePopover";
@@ -206,13 +208,6 @@ const BlockchainVisualizer = () => {
     console.log(message); // Log to the console
     setMessages((prevMessages) => [...prevMessages, message]); // Add to the messages state
   }, []);
-  // const pexel = (id) =>
-  //   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`;
-  //
-  // const images = [
-  //   // Front
-  //   { position: [0, 0, 1.5], rotation: [0, 0, 0], url: pexel(1103970) },
-  // ];
   useEffect(() => {
     // Assuming blocks[0] is the new block you want to update connectorBlocks2 with.
     // You might need a way to store this block from the WebSocket event handler to here.
@@ -272,10 +267,20 @@ const BlockchainVisualizer = () => {
     }
     return allLines;
   };
+
+  //socketIO
+  // const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_BASE_PATH);
+  // useEffect(() => {
+  //   // Listen for incoming messages
+  //   socket.on("message", (message) => {
+  //     console.log(message);
+  //   });
+  // }, []);
+
   useEffect(() => {
+    document.body.style.cursor = hoveredBlock ? "pointer" : "auto";
     const ws = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_BASE_PATH);
 
-    document.body.style.cursor = hoveredBlock ? "pointer" : "auto";
     ws.onopen = (event) => {
       logMessage(`Connected.`);
       logMessage(`Retrieving blocks...`);
@@ -283,16 +288,56 @@ const BlockchainVisualizer = () => {
       const payload = {
         request: { method: "subscribe", arguments: { topics: ["block_data"] } },
       };
-
+      console.log(JSON.stringify(payload));
       ws.send(JSON.stringify(payload));
     };
+
+    // ws.onmessage = (event) => {
+    //   console.log("lol");
+    //   try {
+    //     const request = JSON.parse(event.data);
+    //     const body = JSON.parse(request?.request?.arguments?.data);
+    //     const call_id = request?.request?.call_id;
+    //     console.log(`request: ${JSON.stringify(request)}`);
+    //     console.log(`body: ${JSON.stringify(body)}`);
+    //     if (body) {
+    //       console.log(JSON.stringify(body));
+    //       const topic = body?.topic?.toString() ?? undefined;
+    //
+    //       console.log(
+    //         `Webhook Challenged Date: ${JSON.stringify(new Date().toISOString())} | topic: ${topic} | Body: ${JSON.stringify(body)}`,
+    //       );
+    //
+    //       try {
+    //         const notify = {
+    //           response: {
+    //             result: "None",
+    //             result_type: "None",
+    //             call_id: call_id,
+    //           },
+    //         };
+    //
+    //         console.log(`NOTIFYING ${JSON.stringify(notify)}`);
+    //         ws?.send(JSON.stringify(notify));
+    //       } catch (ex) {
+    //         console.log(JSON.stringify(ex));
+    //       }
+    //       //send heartbeat
+    //       //this.socketClient.send("heartbeat");
+    //       // }
+    //     }
+    //   } catch (ex) {
+    //     console.log(JSON.stringify(ex));
+    //   }
+
     ws.onmessage = (event) => {
       const response = JSON.parse(event.data);
       console.log(response);
+
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
           const blocks: IBlockMessage[] = response.request.arguments.data;
-
+          console.log(response);
           // Calculate block position
           blocks.forEach((block) => {
             logMessage(`New block found: ${block.hash}`);

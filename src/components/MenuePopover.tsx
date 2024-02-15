@@ -50,7 +50,7 @@ export default function MenuePopver(props: IMenuePopover) {
               >
                 Post Processing
               </Switch>
-              <Link href={"https://github.com"}>
+              <Link target={"_blank"} href={"https://github.com"}>
                 <IconBrandGithub />
               </Link>
             </div>
