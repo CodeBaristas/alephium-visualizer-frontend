@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+
+
+.fullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 1s;
+}
+
+.bg {
+  background: linear-gradient(to top, #0a0a0a, #181a1a, #1d1d1f);
+}
+
+.notready {
+  color: #fff;
+}
+
+.clicked {
+  pointer-events: none;
+  opacity: 0;
+}
+
+a {
+  pointer-events: all;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: inherit;
+}
+h1 {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  font-weight: 400;
+  font-size: 8em;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+
+.log-box {
+  padding: 10px;
+  border-left: 2px solid #000;
+  border-top: 2px solid #000;
+
+  font-family: monospace;
+  color: #fff;
+  font-size: 14px;
+  overflow-y: auto; /* Ensure it's scrollable */
+  word-wrap: break-word; /* Breaks long words onto the next line */
+  position: fixed; /* Fixed position relative to the viewport */
+  bottom: 20px; /* Align to the bottom of the viewport */
+  right: 20px; /* Align to the right of the viewport */
+  width: 600px; /* Set a fixed width */
+  max-width: 100%;
+  height: 200px; /* Set a fixed height */
+  background-color: rgba(0, 0, 0, 0.6); /* Optional: Background color with transparency */
+}
