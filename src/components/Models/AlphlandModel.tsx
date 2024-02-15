@@ -9,7 +9,9 @@ const AlphlandModel = () => {
         rotation={[0, 1.6, 0]}
         castShadow
         receiveShadow
+        // @ts-ignore
         geometry={nodes.OpenSCAD_Model.geometry}
+        // @ts-ignore
         material={nodes.OpenSCAD_Model.material}
       >
         <meshPhysicalMaterial

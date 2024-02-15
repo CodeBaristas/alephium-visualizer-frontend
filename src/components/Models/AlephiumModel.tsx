@@ -9,7 +9,9 @@ const AlephiumModel = () => {
         rotation={[0, -0.2, 0]}
         castShadow
         receiveShadow
+        // @ts-ignore
         geometry={nodes.OpenSCAD_Model.geometry}
+        // @ts-ignore
         material={nodes.OpenSCAD_Model.material}
       >
         <meshPhysicalMaterial

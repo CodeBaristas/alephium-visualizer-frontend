@@ -24,13 +24,10 @@ import { calcCubePosition, calculateSection } from "@/utils/calcPositions";
 import AlephiumModel from "@/components/Models/AlephiumModel";
 import * as THREE from "three";
 import AlphlandModel from "@/components/Models/AlphlandModel";
-import Terminal from "@/components/Terminal";
-import Electron from "@/components/Electron";
+
 import { circleRadius, totalChains, totalGroups } from "@/consts";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import TutorialTooltip from "@/components/Tooltip";
-import Frames from "@/components/Frames";
-import SettingsDropdown from "@/components/SettingsDropdown";
+
 import { ScrollShadow } from "@nextui-org/react";
 import MenuePopver from "@/components/MenuePopover";
 interface IBlockMessage {
