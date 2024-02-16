@@ -73,7 +73,7 @@ export default function BlockflowInfoModal() {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" onPress={onClose}>
+                <Button variant="light" size={"lg"} onPress={onClose}>
                   Close
                 </Button>
                 <Link
@@ -88,7 +88,7 @@ export default function BlockflowInfoModal() {
                     startContent={<IconExternalLink />}
                     onPress={onClose}
                   >
-                    Take me deeper!
+                    Deeper, Senpai
                   </Button>
                 </Link>
               </ModalFooter>
