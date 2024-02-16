@@ -490,7 +490,10 @@ const BlockchainVisualizer = () => {
           left: 20,
         }}
       >
-        <Link href={"https://github.com"} target={"_blank"}>
+        <Link
+          href={"https://github.com/CodeBaristas/alephium-visualizer-frontend"}
+          target={"_blank"}
+        >
           <Button
             size={"lg"}
             className={"button"}
@@ -506,8 +509,8 @@ const BlockchainVisualizer = () => {
           className="log-box"
           style={{
             position: "absolute",
-            bottom: 0,
-            right: 0,
+            bottom: 20,
+            right: 20,
           }}
         >
           <ScrollShadow
@@ -527,26 +530,27 @@ const BlockchainVisualizer = () => {
             position: "absolute",
             bottom: "20px",
             left: "20px",
-            color: "white",
-            background: "linear-gradient(to right, #888, #555)", // Grey gradient
+            color: "#fff",
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
             padding: "10px",
-            borderRadius: "5px",
+            borderRadius: "10px",
             pointerEvents: "none",
-            opacity: "0.7",
+            maxWidth: "100%",
           }}
         >
-          {hoveredBlock && (
-            <>
-              <p>Hash: {hoveredBlock.hash}</p>
-              <p>Timestamp: {hoveredBlock.timestamp}</p>
-              <p>Chain Origin: {hoveredBlock.chainFrom}</p>
-              <p>Chain Destination: {hoveredBlock.chainTo}</p>
-              <p>Height: {hoveredBlock.height}</p>
-              <p>Tx Number: {hoveredBlock.txNumber}</p>
-              <p>Hashrate: {hoveredBlock.hashRate}</p>
-              <p>Main Chain: {hoveredBlock.mainChain ? "yes" : "no"}</p>
-            </>
-          )}
+          <p>Hash: {hoveredBlock && hoveredBlock.hash}</p>
+          <p>Timestamp: {hoveredBlock && hoveredBlock.timestamp}</p>
+          <p>ChainFrom: {hoveredBlock && hoveredBlock.chainFrom}</p>
+          <p>ChainTo: {hoveredBlock && hoveredBlock.chainTo}</p>
+          <p>Height: {hoveredBlock && hoveredBlock.height}</p>
+          <p>Tx Number: {hoveredBlock && hoveredBlock.txNumber}</p>
+          <p>
+            Hashrate:{" "}
+            {hoveredBlock && parseInt(hoveredBlock.hashRate) % 1000000} MH/s
+          </p>
+          <p>
+            Main Chain: {hoveredBlock && hoveredBlock.mainChain ? "yes" : "no"}
+          </p>
         </div>
       )}
     </div>

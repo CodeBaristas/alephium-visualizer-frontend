@@ -94,22 +94,18 @@ h1 {
 
 }
 .log-box {
-  padding: 10px;
-  border-left: 2px solid #000;
-  border-top: 2px solid #000;
-
+  border-radius: 10px;
   font-family: monospace;
   color: #fff;
-  font-size: 14px;
   overflow-y: auto; /* Ensure it's scrollable */
   word-wrap: break-word; /* Breaks long words onto the next line */
-  position: fixed; /* Fixed position relative to the viewport */
+  position: absolute; /* Fixed position relative to the viewport */
   bottom: 20px; /* Align to the bottom of the viewport */
   right: 20px; /* Align to the right of the viewport */
   width: 600px; /* Set a fixed width */
   max-width: 100%;
   height: 200px; /* Set a fixed height */
-  background-color: rgba(0, 0, 0, 0.6); /* Optional: Background color with transparency */
+  background-color: rgba(0, 0, 0, 0.7); /* Optional: Background color with transparency */
 }
 
 .button {
