@@ -1,4 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Alephium Blockflow Visualizer
+
+This app was developed for the first [Alephium Hackathon](https://alephium.org/hackathon/).
+
+It visualizes [Alephium's sharding algorithm Blockflow in 3D](https://medium.com/@alephium/an-introduction-to-blockflow-alephiums-sharding-algorithm-bbbf318c3402).
+
+At the time of writing this app is best viewed on Desktop devices.
+
+## Blockflow explained
+Alephium employs a sharded blockchain architecture, dividing its state into groups for parallel processing across multiple chains to boost throughput. Its distinctive sharding algorithm, Blockflow, leverages a Directed Acyclic Graph (DAG) to enable significant user experience enhancements, facilitating efficient, secure, and single-step transactions between groups. Blockflow intricately manages the interconnection of blocks across all chains, promoting high transaction rates (potentially up to 10,000 TPS) without sacrificing ledger integrity. This approach, alongside similar strategies by platforms like Polkadot, Zilliqa, and Kadena, underscores the scalability benefits of sharding in blockchain by allowing parallel data processing, with Alephium's Blockflow algorithm particularly noted for its contribution to scaling transaction capacity and enhancing security and user experience.
+
+Currently, Alephium's mainnet is structured into 16 distinct chains, organized across 4 groups. A 3D model visually represents this setup, with each chain's blocks color-coded for clear differentiation. Intragroup blocks are depicted larger than intergroup blocks. The connections, or dependencies, between newly mined blocks and their predecessors are illustrated with lines. This 3D model dynamically updates with block data in real-time, offering a live visualization of Alephium's blockchain activity.
+
+Dependency example: A new block is mined on chain (3,1). Seven dependencies exist. Four dependencies from each other chain inside the group [(3,0) - (3,1) - (3,2) - (3,3)] and three dependencies from intragroup chains [(0,0) - (1,1) - (2,2)]
+
 
 ## Getting Started
 
@@ -6,28 +20,9 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
