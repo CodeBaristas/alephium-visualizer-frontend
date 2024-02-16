@@ -3,6 +3,8 @@
 /* eslint-disable react/no-unknown-property */
 import { Mesh, Vector3 } from "three";
 import {
+  Dispatch,
+  SetStateAction,
   Suspense,
   useCallback,
   useEffect,
@@ -15,10 +17,11 @@ import {
   Environment,
   OrbitControls,
   Line,
-  Stats,
   Html,
   MeshReflectorMaterial,
   Text,
+  BakeShadows,
+  ContactShadows,
 } from "@react-three/drei";
 import { calcCubePosition, calculateSection } from "@/utils/calcPositions";
 import AlephiumModel from "@/components/Models/AlephiumModel";
@@ -32,6 +35,11 @@ import PubSub from "pubsub-js";
 
 import { ScrollShadow } from "@nextui-org/react";
 import MenuePopver from "@/components/MenuePopover";
+import Link from "next/link";
+import { IconBrandGithub } from "@tabler/icons-react";
+import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
+import { Button } from "@nextui-org/button";
+
 interface IBlockMessage {
   hash: string;
   timestamp: number;
@@ -44,10 +52,12 @@ interface IBlockMessage {
   position: Vector3;
   isLeading: boolean;
 }
+
 interface IBlockProps {
   blockData: IBlockMessage;
-  onHover: React.Dispatch<React.SetStateAction<IBlockMessage | null>>;
+  onHover: Dispatch<SetStateAction<IBlockMessage | null>>;
 }
+
 interface ILineProps {
   blockData: IBlockMessage[];
 }
@@ -80,7 +90,6 @@ const Block = (props: IBlockProps) => {
       onPointerOver={(e) => {
         document.body.style.cursor = "pointer";
         e.stopPropagation();
-
         props.onHover(props.blockData);
       }}
       onClick={() =>
@@ -117,7 +126,7 @@ const Block = (props: IBlockProps) => {
         }
       />
       {props.blockData.isLeading ? (
-        <boxGeometry args={[1.5, 1.5, 1.5]} attach="geometry" />
+        <boxGeometry args={[2, 2, 2]} attach="geometry" />
       ) : (
         <boxGeometry args={[1, 1, 1]} attach="geometry" />
       )}
@@ -155,7 +164,7 @@ const GlowingRing = () => {
   });
 
   return (
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} position={[0, -10, 0]}>
       {/* TorusGeometry args: [radius, tubeRadius, radialSegments, tubularSegments] */}
       <torusGeometry args={[circleRadius + 5, 0.4, 32, 128]} />
       <meshStandardMaterial
@@ -166,42 +175,22 @@ const GlowingRing = () => {
     </mesh>
   );
 };
-interface MessageLogProps {
-  messages: string[];
-}
-const MessageLogBox: React.FC<MessageLogProps> = ({ messages }) => {
-  // Example of how to position multiple messages. Adjust as needed.
-  return (
-    <>
-      {messages.map((message, index) => (
-        // eslint-disable-next-line react/jsx-no-undef
-        <Text
-          key={index}
-          color={"#000"} // Text color
-          anchorX="center" // Horizontal center
-          anchorY="middle" // Vertical center
-          position={[0, index * -0.5, 0]} // Adjust position based on the message index
-        >
-          {message}
-        </Text>
-      ))}
-    </>
-  );
-};
 
 const BlockchainVisualizer = () => {
   const [hoveredBlock, setHoveredBlock] = useState<IBlockMessage | null>(null);
   const [blocks, setBlocks] = useState<IBlockMessage[]>([]); // State to store block data
   const [lines, setLines] = useState<[Vector3, Vector3][]>([]);
   const [latestBlock, setLatestBlock] = useState<IBlockMessage | null>(null);
-
+  const [refToLatestMinedBlock, setRefToLatestMinedBlock] = useState();
   const connectorBlocks2 = useRef<IBlockMessage[][]>([]);
+  const blockCounter = useRef<number>(1);
+  const firstBlockTimestamp = useRef<number>(0);
 
   const [messages, setMessages] = useState<string[]>([]);
   const [displayLogBox, setDisplayLogBox] = useState<boolean>(true);
   const [displayHoverBlockInfoBox, setDisplayHoverBlockInfoBox] =
     useState<boolean>(true);
-  const [postProcessing, setPostProcessing] = useState<boolean>(true);
+  const [postProcessing, setPostProcessing] = useState<boolean>(false);
 
   // Function to log messages both to the console and the state
   const logMessage = useCallback((message: string) => {
@@ -336,55 +325,65 @@ const BlockchainVisualizer = () => {
 
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
-          const blocks: IBlockMessage[] = response.request.arguments.data;
+          const block: IBlockMessage = response.request.arguments.data;
           console.log(response);
 
+          // If the block group origin and destination are equal -> New "Lead" Block for that group detected
+          if (block.chainFrom === block.chainTo) {
+            block.isLeading = true;
+          }
           // Calculate block position
-          blocks.forEach((block) => {
-            logMessage(`New block found: ${block.hash}`);
-            console.log("timestamp", block.timestamp % 10000);
-            block.position = calcCubePosition(
-              block.chainFrom,
-              block.chainTo,
-              totalChains,
-              circleRadius,
-              (block.timestamp % 10000) / 10000, // Using your provided formula
-            );
+          logMessage(
+            `(${blockCounter.current}) New ${block.isLeading ? "leading" : ""} block found (${block.chainFrom} -> ${block.chainTo}): ${block.hash}`,
+          );
 
-            const call_id = response?.request?.call_id;
-            console.log("call_id", call_id);
-            console.log(`request: ${JSON.stringify(response)}`);
+          // To calculate the y-axis offsets (heightOffset)
+          if (firstBlockTimestamp.current === 0) {
+            firstBlockTimestamp.current = block.timestamp;
+          }
+          console.log(
+            "height offset ",
+            (block.timestamp - firstBlockTimestamp.current) / 1000,
+          );
+          blockCounter.current += 1;
+          console.log("timestamp", block.timestamp % 10000);
+          block.position = calcCubePosition(
+            block.chainFrom,
+            block.chainTo,
+            totalChains,
+            circleRadius,
+            (block.timestamp - firstBlockTimestamp.current) / 1000,
+          );
+          // answer the rpc
+          const call_id = response?.request?.call_id;
+          console.log("call_id", call_id);
+          console.log(`request: ${JSON.stringify(response)}`);
 
-            try {
-              const notify = {
-                response: {
-                  result: "None",
-                  result_type: "None",
-                  call_id: call_id,
-                },
-              };
+          try {
+            const notify = {
+              response: {
+                result: "None",
+                result_type: "None",
+                call_id: call_id,
+              },
+            };
 
-              console.log(`NOTIFYING ${JSON.stringify(notify)}`);
-              ws?.send(JSON.stringify(notify));
-            } catch (ex) {
-              console.log(JSON.stringify(ex));
-            }
+            console.log(`NOTIFYING ${JSON.stringify(notify)}`);
+            ws?.send(JSON.stringify(notify));
+          } catch (ex) {
+            console.log(JSON.stringify(ex));
+          }
 
-            // If the block group origin and destination are equal -> New "Lead" Block for that group detected
-            if (block.chainFrom === block.chainTo) {
-              block.isLeading = true;
-            }
-          });
           setLines((prevLines) => {
             const newLines = computeLinesForNewBlock(
-              blocks[0],
+              block,
               connectorBlocks2.current,
             );
             return [...prevLines, ...newLines];
           });
           // connectorBlocks2.current = updateConnectorBlocks(blocks[0]);
-          setLatestBlock(blocks[0]);
-          setBlocks((prevBlocks) => [...prevBlocks, ...blocks]); // Update state with new block data
+          setLatestBlock(block);
+          setBlocks((prevBlocks) => [...prevBlocks, block]); // Update state with new block data
         }
       }
     };
@@ -397,20 +396,50 @@ const BlockchainVisualizer = () => {
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <Canvas
-        camera={{ fov: 90, position: [30, 30, 30], near: 3 }}
+        shadows
+        dpr={[1, 2]}
+        camera={{ fov: 90, position: [30, 30, 30], near: 0.001 }}
         style={{ width: "100vw", height: "100vh" }}
+        onCreated={(state) => (state.gl.shadowMap.autoUpdate = false)}
       >
+        <ambientLight intensity={4} />
+        <spotLight
+          position={[1, 5, 3]}
+          angle={0.2}
+          penumbra={1}
+          intensity={3}
+          castShadow
+          shadow-mapSize={2048}
+        />
+        <spotLight
+          position={[0, 10, -10]}
+          intensity={2}
+          angle={0.04}
+          penumbra={2}
+          castShadow
+          shadow-mapSize={1024}
+        />
         <Suspense fallback={null}>
           <GlowingRing />
           {/*<Frames images={images} />*/}
           {/*<TutorialTooltip />*/}
           {/*<MessageLogBox messages={["test"]} />*/}
-          <ambientLight />
 
-          <Stats />
           <AlephiumModel />
           <AlphlandModel />
-          <Environment background files={"./test.hdr"} blur={0} />
+          <ContactShadows
+            frames={1}
+            rotation-x={[Math.PI / 2]}
+            position={[0, -0.4, 0]}
+            far={1}
+            width={1.5}
+            height={1.5}
+            blur={0.2}
+          />
+
+          {/*<Environment background files={"./test.hdr"} blur={0} />*/}
+          <Environment preset="night" />
+          <BakeShadows />
           <OrbitControls />
           {blocks.map((block) => (
             <Block
@@ -432,7 +461,7 @@ const BlockchainVisualizer = () => {
         </Suspense>
         {postProcessing && (
           <EffectComposer>
-            <Bloom mipmapBlur luminanceThreshold={1} radius={0.5} />
+            <Bloom mipmapBlur luminanceThreshold={0.1} radius={0.1} />
           </EffectComposer>
         )}
       </Canvas>
@@ -451,6 +480,26 @@ const BlockchainVisualizer = () => {
           setBlockOverInfoBoxState={setDisplayHoverBlockInfoBox}
           setPostProcessingState={setPostProcessing}
         />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          position: "absolute",
+          top: 20,
+          left: 20,
+        }}
+      >
+        <Link href={"https://github.com"} target={"_blank"}>
+          <Button
+            size={"lg"}
+            className={"button"}
+            startContent={<IconBrandGithub />}
+          >
+            Code
+          </Button>
+        </Link>
+        <BlockflowInfoModal />
       </div>
       {displayLogBox && (
         <div
@@ -486,16 +535,18 @@ const BlockchainVisualizer = () => {
             opacity: "0.7",
           }}
         >
-          <p>Hash: {hoveredBlock && hoveredBlock.hash}</p>
-          <p>Timestamp: {hoveredBlock && hoveredBlock.timestamp}</p>
-          <p>Chain Origin: {hoveredBlock && hoveredBlock.chainFrom}</p>
-          <p>Chain Destination: {hoveredBlock && hoveredBlock.chainTo}</p>
-          <p>Height: {hoveredBlock && hoveredBlock.height}</p>
-          <p>Tx Number: {hoveredBlock && hoveredBlock.txNumber}</p>
-          <p>Hashrate: {hoveredBlock && hoveredBlock.hashRate}</p>
-          <p>
-            Main Chain: {hoveredBlock && hoveredBlock.mainChain ? "yes" : "no"}
-          </p>
+          {hoveredBlock && (
+            <>
+              <p>Hash: {hoveredBlock.hash}</p>
+              <p>Timestamp: {hoveredBlock.timestamp}</p>
+              <p>Chain Origin: {hoveredBlock.chainFrom}</p>
+              <p>Chain Destination: {hoveredBlock.chainTo}</p>
+              <p>Height: {hoveredBlock.height}</p>
+              <p>Tx Number: {hoveredBlock.txNumber}</p>
+              <p>Hashrate: {hoveredBlock.hashRate}</p>
+              <p>Main Chain: {hoveredBlock.mainChain ? "yes" : "no"}</p>
+            </>
+          )}
         </div>
       )}
     </div>

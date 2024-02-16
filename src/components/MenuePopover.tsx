@@ -7,7 +7,12 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Switch } from "@nextui-org/switch";
-import { IconBrandGithub, IconMessageChatbot } from "@tabler/icons-react";
+import {
+  IconBrandGithub,
+  IconDoorEnter,
+  IconMenu,
+  IconMessageChatbot,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { Space } from "lucide-react";
 
@@ -23,7 +28,14 @@ export default function MenuePopver(props: IMenuePopover) {
   return (
     <Popover placement="bottom" showArrow offset={10}>
       <PopoverTrigger>
-        <Button color="primary">Customize experience</Button>
+        <Button
+          className={"button"}
+          size={"lg"}
+          color="primary"
+          startContent={<IconMenu />}
+        >
+          Customize
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[240px]">
         {(titleProps) => (
@@ -50,9 +62,6 @@ export default function MenuePopver(props: IMenuePopover) {
               >
                 Post Processing
               </Switch>
-              <Link target={"_blank"} href={"https://github.com"}>
-                <IconBrandGithub />
-              </Link>
             </div>
           </div>
         )}

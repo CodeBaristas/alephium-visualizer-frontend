@@ -6,7 +6,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Alephium Blockchain Visualizer",
-  description: "This application visualizes the blockflow within the Alephium ecosystem, which consits of 16 individual groups/chains.",
+  description:
+    "This application visualizes Alephium's sharding algorithm Blockflow in 3D. Currently it consists of 16 individual chains distributed over 4 groups.",
 };
 
 export default function RootLayout({
