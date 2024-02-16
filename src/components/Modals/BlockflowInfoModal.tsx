@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Link from "next/link";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { IconExternalLink, IconInfoCircle } from "@tabler/icons-react";
 
 export default function BlockflowInfoModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -56,7 +56,7 @@ export default function BlockflowInfoModal() {
                   <b>16 distinct chains</b>, organized across <b>4 groups</b>. A
                   3D model visually represents this setup, with each
                   chain&apos;s blocks color-coded for clear differentiation.{" "}
-                  <b>Intragroup</b> block are depicted larger than{" "}
+                  <b>Intragroup</b> blocks are depicted larger than{" "}
                   <b>intergroup</b> blocks. The connections, or{" "}
                   <b>dependencies</b>, between newly mined blocks and their
                   predecessors are illustrated with lines. This 3D model
@@ -73,6 +73,9 @@ export default function BlockflowInfoModal() {
                 </p>
               </ModalBody>
               <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Close
+                </Button>
                 <Link
                   href={
                     "https://medium.com/@alephium/an-introduction-to-blockflow-alephiums-sharding-algorithm-bbbf318c3402"
@@ -82,6 +85,7 @@ export default function BlockflowInfoModal() {
                   <Button
                     className={"buttonModal"}
                     size={"lg"}
+                    startContent={<IconExternalLink />}
                     onPress={onClose}
                   >
                     Take me deeper!
