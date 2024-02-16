@@ -527,6 +527,7 @@ const BlockchainVisualizer = () => {
       {displayHoverBlockInfoBox && (
         <div
           style={{
+            fontFamily: "monospace",
             position: "absolute",
             bottom: "20px",
             left: "20px",
