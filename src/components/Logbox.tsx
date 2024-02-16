@@ -1,10 +1,25 @@
-import React from "react";
-import { ScrollShadow } from "@nextui-org/react";
+import React, { useEffect, useRef } from "react";
 
-export default function Logbox({ children }) {
+export default function Logbox({ messages }) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <ScrollShadow hideScrollBar className="w-[300px] h-[400px]">
-      {children}
-    </ScrollShadow>
+    <div
+      className="log-box"
+      style={{
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+      }}
+    >
+      {messages.map((message: string, index: number) => (
+        <div key={index}>{message}</div>
+      ))}
+      <div ref={messagesEndRef} />
+    </div>
   );
 }

@@ -27,18 +27,16 @@ import { calcCubePosition, calculateSection } from "@/utils/calcPositions";
 import AlephiumModel from "@/components/Models/AlephiumModel";
 import * as THREE from "three";
 import AlphlandModel from "@/components/Models/AlphlandModel";
-import io from "socket.io-client";
 
 import { circleRadius, totalChains, totalGroups } from "@/consts";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import PubSub from "pubsub-js";
 
-import { ScrollShadow } from "@nextui-org/react";
 import MenuePopver from "@/components/MenuePopover";
 import Link from "next/link";
 import { IconBrandGithub } from "@tabler/icons-react";
 import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
 import { Button } from "@nextui-org/button";
+import Logbox from "@/components/Logbox";
 
 interface IBlockMessage {
   hash: string;
@@ -504,26 +502,7 @@ const BlockchainVisualizer = () => {
         </Link>
         <BlockflowInfoModal />
       </div>
-      {displayLogBox && (
-        <div
-          className="log-box"
-          style={{
-            position: "absolute",
-            bottom: 20,
-            right: 20,
-          }}
-        >
-          <ScrollShadow
-            size={100}
-            hideScrollBar
-            className="w-[300px] h-[400px]"
-          >
-            {messages.map((message, index) => (
-              <div key={index}>{message}</div>
-            ))}
-          </ScrollShadow>
-        </div>
-      )}
+      {displayLogBox && <Logbox messages={messages} />}
       {displayHoverBlockInfoBox && (
         <div
           style={{
