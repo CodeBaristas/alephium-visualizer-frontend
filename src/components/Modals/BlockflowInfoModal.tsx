@@ -26,7 +26,12 @@ export default function BlockflowInfoModal() {
       >
         <p className={"hide-mobile"}>Blockflow</p>
       </Button>
-      <Modal size={"3xl"} isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        size={"3xl"}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        scrollBehavior={"inside"}
+      >
         <ModalContent>
           {(onClose) => (
             <>

@@ -9,7 +9,6 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { IconHelp } from "@tabler/icons-react";
-import isMobile from "is-mobile";
 
 export default function ControlsModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
