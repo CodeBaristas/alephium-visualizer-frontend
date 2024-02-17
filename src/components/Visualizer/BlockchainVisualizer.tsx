@@ -25,29 +25,24 @@ import AlphlandModel from "@/components/Models/AlphlandModel";
 
 import {
   circleRadius,
-  groupColors,
   heightOffsetDivisor,
   totalChains,
   totalGroups,
 } from "@/consts";
-import {
-  Bloom,
-  DepthOfField,
-  EffectComposer,
-  Noise,
-  Vignette,
-} from "@react-three/postprocessing";
+
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 import MenuePopver from "@/components/MenuePopover";
 import Link from "next/link";
-import { IconBrandGithub } from "@tabler/icons-react";
-import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
 import { Button } from "@nextui-org/button";
+import { IconBrandGithub } from "@tabler/icons-react";
 import Logbox from "@/components/Logbox";
-import ControlsModal from "@/components/Modals/ControlsModal";
 import GlowingRing from "@/components/GlowingRing";
+import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
+import ControlsModal from "@/components/Modals/ControlsModal";
+import Block from "@/components/Block";
 
-interface IBlockMessage {
+export interface IBlockMessage {
   hash: string;
   timestamp: number;
   chainFrom: number;
@@ -59,48 +54,6 @@ interface IBlockMessage {
   position: Vector3;
   isLeading: boolean;
 }
-
-interface IBlockProps {
-  blockData: IBlockMessage;
-  onHover: Dispatch<SetStateAction<IBlockMessage | null>>;
-}
-
-// INDIVIDUAL BLOCK
-const Block = (props: IBlockProps) => {
-  return (
-    <mesh
-      position={props.blockData.position}
-      onPointerOver={(e) => {
-        document.body.style.cursor = "pointer";
-        e.stopPropagation();
-        props.onHover(props.blockData);
-      }}
-      onClick={() =>
-        window.open(
-          `${process.env.NEXT_PUBLIC_ALEPHIUM_EXPLORER_BASE_PATH}blocks/${props.blockData.hash}`,
-        )
-      }
-      onPointerOut={() => {
-        document.body.style.cursor = "default";
-        props.onHover(null);
-      }}
-    >
-      <meshStandardMaterial
-        attach="material"
-        color={
-          groupColors[
-            calculateSection(props.blockData.chainFrom, props.blockData.chainTo)
-          ]
-        }
-      />
-      {props.blockData.isLeading ? (
-        <boxGeometry args={[4, 4, 4]} attach="geometry" />
-      ) : (
-        <boxGeometry args={[2, 2, 2]} attach="geometry" />
-      )}
-    </mesh>
-  );
-};
 
 export default function BlockchainVisualizer() {
   const [hoveredBlock, setHoveredBlock] = useState<IBlockMessage | null>(null);
@@ -178,15 +131,6 @@ export default function BlockchainVisualizer() {
     return allLines;
   };
 
-  // socketIO
-  // const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_BASE_PATH);
-  // useEffect(() => {
-  //   // Listen for incoming messages
-  //   socket.on("message", (message) => {
-  //     console.log(message);
-  //   });
-  // }, []);
-
   useEffect(() => {
     document.body.style.cursor = hoveredBlock ? "pointer" : "auto";
     const ws = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_BASE_PATH);
@@ -198,23 +142,20 @@ export default function BlockchainVisualizer() {
       const payload = {
         request: { method: "subscribe", arguments: { topics: ["block_data"] } },
       };
-      console.log(JSON.stringify(payload));
       ws.send(JSON.stringify(payload));
     };
 
     ws.onmessage = async (event) => {
       const response = JSON.parse(event.data);
-      console.log("res", response);
 
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
           const block: IBlockMessage = response.request.arguments.data;
-          console.log(response);
-
           // If the block group origin and destination are equal -> New "Lead" Block for that group detected
           if (block.chainFrom === block.chainTo) {
             block.isLeading = true;
           }
+
           // Calculate block position
           logMessage(
             `(${blockCounter.current}) New ${block.isLeading ? "leading" : ""} block found (${block.chainFrom} -> ${block.chainTo}): ${block.hash}`,
@@ -224,13 +165,7 @@ export default function BlockchainVisualizer() {
           if (firstBlockTimestamp.current === 0) {
             firstBlockTimestamp.current = block.timestamp;
           }
-          console.log(
-            "height offset ",
-            (block.timestamp - firstBlockTimestamp.current) /
-              heightOffsetDivisor,
-          );
           blockCounter.current += 1;
-          console.log("timestamp", block.timestamp % 10000);
           block.position = calcCubePosition(
             block.chainFrom,
             block.chainTo,
@@ -239,25 +174,6 @@ export default function BlockchainVisualizer() {
             (block.timestamp - firstBlockTimestamp.current) /
               heightOffsetDivisor,
           );
-          // // answer the rpc
-          // const call_id = response?.request?.call_id;
-          // console.log("call_id", call_id);
-          // console.log(`request: ${JSON.stringify(response)}`);
-          //
-          // try {
-          //   const notify = {
-          //     response: {
-          //       result: "None",
-          //       result_type: "None",
-          //       call_id: call_id,
-          //     },
-          //   };
-          //
-          //   console.log(`NOTIFYING ${JSON.stringify(notify)}`);
-          //   ws?.send(JSON.stringify(notify));
-          // } catch (ex) {
-          //   console.log(JSON.stringify(ex));
-          // }
 
           setLines((prevLines) => {
             const newLines = computeLinesForNewBlock(
@@ -266,13 +182,11 @@ export default function BlockchainVisualizer() {
             );
             return [...prevLines, ...newLines];
           });
-          // connectorBlocks2.current = updateConnectorBlocks(blocks[0]);
           setLatestBlock(block);
           setBlocks((prevBlocks) => [...prevBlocks, block]); // Update state with new block data
         }
       }
     };
-
     return () => {
       ws.close();
     };
@@ -282,7 +196,6 @@ export default function BlockchainVisualizer() {
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <Canvas
         shadows
-        dpr={[1, 2]}
         camera={{ fov: 90, position: [50, 50, 50], near: 0.001 }}
         style={{ width: "100vw", height: "100vh" }}
         onCreated={(state) => (state.gl.shadowMap.autoUpdate = false)}
@@ -318,8 +231,6 @@ export default function BlockchainVisualizer() {
             height={1.5}
             blur={0.2}
           />
-
-          {/*<Environment background files={"./test.hdr"} blur={0} />*/}
           <Environment preset="night" />
           <BakeShadows />
           <OrbitControls />

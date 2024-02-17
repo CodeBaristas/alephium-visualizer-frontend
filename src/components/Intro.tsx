@@ -44,9 +44,7 @@ export default function Intro({ children }) {
               </Link>
               .
             </p>
-            <p className={"intro-p"}>
-              At the time of writing this app is best viewed on Desktop devices.
-            </p>
+
             <div className={"enterContainer"}>
               <Button
                 size={"lg"}
