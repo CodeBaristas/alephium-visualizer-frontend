@@ -12,8 +12,8 @@ export default function Logbox({ messages }) {
       className="log-box"
       style={{
         position: "absolute",
-        bottom: 20,
-        right: 20,
+        bottom: 0,
+        right: 0,
       }}
     >
       {messages.map((message: string, index: number) => (

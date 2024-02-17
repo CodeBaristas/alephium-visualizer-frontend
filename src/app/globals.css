@@ -103,7 +103,7 @@ h1 {
 .log-box {
   border-radius: 10px;
   font-family: monospace;
-  padding: 10px;
+  padding: 20px;
   color: #fff;
   overflow-y: auto; /* Ensure it's scrollable */
   word-wrap: break-word; /* Breaks long words onto the next line */
