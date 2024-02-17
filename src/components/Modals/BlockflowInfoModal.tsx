@@ -27,6 +27,7 @@ export default function BlockflowInfoModal() {
         <p className={"hide-mobile"}>Blockflow</p>
       </Button>
       <Modal
+        placement={"center"}
         size={"3xl"}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -76,7 +77,7 @@ export default function BlockflowInfoModal() {
                   (3,1). <b>Seven dependencies</b> exist. Four dependencies from
                   each other chain inside the group [(3,0) - (3,1) - (3,2) -
                   (3,3)] and three dependencies from intragroup chains [(0,0) -
-                  (1,1) - (2,2)]
+                  (1,1) - (2,2)].
                 </p>
               </ModalBody>
               <ModalFooter>

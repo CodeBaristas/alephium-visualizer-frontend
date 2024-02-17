@@ -23,7 +23,12 @@ export default function ControlsModal() {
       >
         Controls Desktop
       </Button>
-      <Modal size={"3xl"} isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        placement={"center"}
+        size={"3xl"}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
         <ModalContent>
           {(onClose) => (
             <>
