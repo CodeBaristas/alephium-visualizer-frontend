@@ -108,6 +108,8 @@ a:hover {
   @media only screen and (max-width: 600px){
     right: 0px;
     height: 150px; /* Set a fixed height */
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 
   }
 
