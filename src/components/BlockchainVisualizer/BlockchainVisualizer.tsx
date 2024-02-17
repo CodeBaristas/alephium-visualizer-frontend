@@ -28,19 +28,20 @@ import {
   heightOffsetDivisor,
   totalChains,
   totalGroups,
-} from "@/consts";
+} from "@/utils/consts";
 
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
-import MenuePopver from "@/components/MenuePopover";
+import MenuePopver from "@/components/CustomizePopover/CustomizePopover";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
 import { IconBrandGithub } from "@tabler/icons-react";
-import Logbox from "@/components/Logbox";
-import GlowingRing from "@/components/GlowingRing";
+import Logbox from "@/components/Logbox/Logbox";
+import GlowingRing from "@/components/GlowingRing/GlowingRing";
 import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
 import ControlsModal from "@/components/Modals/ControlsModal";
-import Block from "@/components/Block";
+import Block from "@/components/Block/Block";
+import GithubButton from "@/components/GithubButton/GithubButton";
 
 export interface IBlockMessage {
   hash: string;
@@ -283,18 +284,7 @@ export default function BlockchainVisualizer() {
           left: 20,
         }}
       >
-        <Link
-          href={"https://github.com/CodeBaristas/alephium-visualizer-frontend"}
-          target={"_blank"}
-        >
-          <Button
-            size={"lg"}
-            className={"button"}
-            startContent={<IconBrandGithub />}
-          >
-            Code
-          </Button>
-        </Link>
+        <GithubButton />
         <BlockflowInfoModal />
         <ControlsModal />
       </div>
@@ -313,6 +303,7 @@ export default function BlockchainVisualizer() {
             pointerEvents: "none",
             maxWidth: "100%",
           }}
+          className={"hide-mobile"}
         >
           <p>Hash: {hoveredBlock && hoveredBlock.hash}</p>
           <p>Timestamp: {hoveredBlock && hoveredBlock.timestamp}</p>

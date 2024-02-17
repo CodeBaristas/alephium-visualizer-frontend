@@ -1,8 +1,8 @@
 // INDIVIDUAL BLOCK
-import { groupColors } from "@/consts";
+import { groupColors } from "@/utils/consts";
 import { calculateSection } from "@/utils/calcPositions";
 import { Dispatch, SetStateAction } from "react";
-import { IBlockMessage } from "@/components/Visualizer/BlockchainVisualizer";
+import { IBlockMessage } from "@/components/BlockchainVisualizer/BlockchainVisualizer";
 
 interface IBlockProps {
   blockData: IBlockMessage;

@@ -9,7 +9,7 @@ function Ready({ setReady }) {
   return null;
 }
 
-export default function Intro({ children }) {
+export default function IntroScreen({ children }) {
   const [clicked, setClicked] = useState(false);
   const [ready, setReady] = useState(false);
   return (

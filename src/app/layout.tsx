@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Alephium Blockchain Visualizer",
+  title: "Alephium Blockchain BlockchainVisualizer",
   description:
     "This application visualizes Alephium's sharding algorithm Blockflow in 3D. Currently it consists of 16 individual chains distributed over 4 groups.",
 };

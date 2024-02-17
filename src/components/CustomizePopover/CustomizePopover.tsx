@@ -26,7 +26,7 @@ export default function MenuePopver(props: IMenuePopover) {
           color="primary"
           startContent={<IconMenu />}
         >
-          Customize
+          <p className={"hide-mobile"}>Customize</p>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[240px]">
@@ -43,6 +43,7 @@ export default function MenuePopver(props: IMenuePopover) {
                 Log Box
               </Switch>
               <Switch
+                className={"hide-mobile"}
                 defaultSelected={props.blockOverInfoBoxState}
                 onValueChange={props.setBlockOverInfoBoxState}
               >

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Mesh } from "three";
 import { useFrame } from "@react-three/fiber";
-import { circleRadius } from "@/consts";
+import { circleRadius } from "@/utils/consts";
 import * as THREE from "three";
 
 export default function GlowingRing() {

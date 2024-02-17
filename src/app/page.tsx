@@ -1,15 +1,15 @@
 "use client";
 
-import BlockchainVisualizer from "@/components/Visualizer/BlockchainVisualizer";
-import Intro from "@/components/Intro";
+import BlockchainVisualizer from "@/components/BlockchainVisualizer/BlockchainVisualizer";
+import IntroScreen from "@/components/IntroScreen/IntroScreen";
 import { NextUIProvider } from "@nextui-org/react";
 
 export default function Home() {
   return (
     <NextUIProvider>
-      <Intro>
+      <IntroScreen>
         <BlockchainVisualizer />
-      </Intro>
+      </IntroScreen>
     </NextUIProvider>
   );
 }

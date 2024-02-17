@@ -10,6 +10,8 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { IconExternalLink, IconInfoCircle } from "@tabler/icons-react";
+import isMobile from "is-mobile";
+import clsx from "clsx";
 
 export default function BlockflowInfoModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -22,7 +24,7 @@ export default function BlockflowInfoModal() {
         startContent={<IconInfoCircle />}
         onPress={onOpen}
       >
-        Blockflow
+        <p className={"hide-mobile"}>Blockflow</p>
       </Button>
       <Modal size={"3xl"} isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

@@ -8,12 +8,8 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
-import Link from "next/link";
-import {
-  IconExternalLink,
-  IconHelp,
-  IconInfoCircle,
-} from "@tabler/icons-react";
+import { IconHelp } from "@tabler/icons-react";
+import isMobile from "is-mobile";
 
 export default function ControlsModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -26,7 +22,7 @@ export default function ControlsModal() {
         startContent={<IconHelp />}
         onPress={onOpen}
       >
-        Controls
+        <p className={"hide-mobile"}>Controls</p>
       </Button>
       <Modal size={"3xl"} isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
