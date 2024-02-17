@@ -19,7 +19,7 @@ export default function BlockflowInfoModal() {
   return (
     <>
       <Button
-        size={"lg"}
+        size={"md"}
         className={"button"}
         startContent={<IconInfoCircle />}
         onPress={onOpen}
@@ -91,7 +91,7 @@ export default function BlockflowInfoModal() {
                 >
                   <Button
                     className={"buttonModal"}
-                    size={"lg"}
+                    size={"md"}
                     startContent={<IconExternalLink />}
                     onPress={onClose}
                   >

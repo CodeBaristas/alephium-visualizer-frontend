@@ -10,7 +10,7 @@ export default function GithubButton() {
       target={"_blank"}
     >
       <Button
-        size={"lg"}
+        size={"md"}
         className={"button"}
         startContent={<IconBrandGithub />}
       >
