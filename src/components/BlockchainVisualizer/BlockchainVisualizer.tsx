@@ -32,7 +32,7 @@ import {
 
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
-import MenuePopver from "@/components/CustomizePopover/CustomizePopover";
+import CustomizePopover from "@/components/CustomizePopover/CustomizePopover";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
 import { IconBrandGithub } from "@tabler/icons-react";
@@ -266,7 +266,7 @@ export default function BlockchainVisualizer() {
           right: 20,
         }}
       >
-        <MenuePopver
+        <CustomizePopover
           logBoxState={displayLogBox}
           blockOverInfoBoxState={displayHoverBlockInfoBox}
           postProcessingState={postProcessing}

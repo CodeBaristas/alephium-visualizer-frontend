@@ -8,7 +8,7 @@ import {
 import { Switch } from "@nextui-org/switch";
 import { IconMenu } from "@tabler/icons-react";
 
-interface IMenuePopover {
+interface ICustomizePopover {
   logBoxState: boolean;
   blockOverInfoBoxState: boolean;
   postProcessingState: boolean;
@@ -16,7 +16,7 @@ interface IMenuePopover {
   setBlockOverInfoBoxState: Dispatch<SetStateAction<boolean>>;
   setPostProcessingState: Dispatch<SetStateAction<boolean>>;
 }
-export default function MenuePopver(props: IMenuePopover) {
+export default function CustomizePopover(props: ICustomizePopover) {
   return (
     <Popover placement="bottom" showArrow offset={10}>
       <PopoverTrigger>
