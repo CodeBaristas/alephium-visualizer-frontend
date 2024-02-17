@@ -18,6 +18,8 @@
 
 body {
   overflow-y: hidden !important;
+  overflow-x: hidden !important;
+
   position: relative;
   background: #252525;
   background: linear-gradient(15deg, #101010 0%, #252525 100%);
@@ -39,7 +41,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+
   transition: all 2s;
 }
 

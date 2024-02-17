@@ -22,7 +22,7 @@ export default function CustomizePopover(props: ICustomizePopover) {
       <PopoverTrigger>
         <Button
           className={"button"}
-          size={"lg"}
+          size={"md"}
           color="primary"
           startContent={<IconMenu />}
         >
