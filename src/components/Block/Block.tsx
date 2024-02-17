@@ -7,15 +7,22 @@ import { IBlockMessage } from "@/components/BlockchainVisualizer/BlockchainVisua
 interface IBlockProps {
   blockData: IBlockMessage;
   onHover: Dispatch<SetStateAction<IBlockMessage | null>>;
+  enableHover: boolean;
 }
-export default function Block({ blockData, onHover }: IBlockProps) {
+export default function Block({
+  blockData,
+  onHover,
+  enableHover,
+}: IBlockProps) {
   return (
     <mesh
       position={blockData.position}
       onPointerOver={(e) => {
         document.body.style.cursor = "pointer";
         e.stopPropagation();
-        onHover(blockData);
+        if (enableHover) {
+          onHover(blockData);
+        }
       }}
       onClick={() =>
         window.open(
@@ -24,7 +31,6 @@ export default function Block({ blockData, onHover }: IBlockProps) {
       }
       onPointerOut={() => {
         document.body.style.cursor = "default";
-        onHover(null);
       }}
     >
       <meshStandardMaterial
@@ -34,9 +40,9 @@ export default function Block({ blockData, onHover }: IBlockProps) {
         }
       />
       {blockData.isLeading ? (
-        <boxGeometry args={[4, 4, 4]} attach="geometry" />
-      ) : (
         <boxGeometry args={[2, 2, 2]} attach="geometry" />
+      ) : (
+        <boxGeometry args={[1.5, 1.5, 1.5]} attach="geometry" />
       )}
     </mesh>
   );

@@ -82,9 +82,6 @@ export default function BlockchainVisualizer() {
     }
   }, [lines]); // This effect depends on `lines`, so it runs after `lines` are updated.
   const updateConnectorBlocks = (newBlock: IBlockMessage) => {
-    console.log("nb", newBlock);
-    console.log("cb", connectorBlocks2.current);
-
     // Create a deep copy of the currentBlocks to avoid direct state mutation
     let updatedBlocks = connectorBlocks2.current.map((innerArray) =>
       innerArray.slice(),
@@ -112,11 +109,13 @@ export default function BlockchainVisualizer() {
 
     if (newBlock && connectorBlocks) {
       if (connectorBlocks.at(newBlock.chainFrom)) {
-        connectorBlocks.at(newBlock.chainFrom).forEach((connectorBlock) => {
-          console.log(newBlock.hash);
-          console.log(connectorBlock.hash);
-          allLines.push([newBlock.position, connectorBlock.position]);
-        });
+        if (connectorBlocks.at(newBlock.chainFrom)) {
+          connectorBlocks.at(newBlock.chainFrom).forEach((connectorBlock) => {
+            console.log(newBlock.hash);
+            console.log(connectorBlock.hash);
+            allLines.push([newBlock.position, connectorBlock.position]);
+          });
+        }
       }
       for (let i = 0; i < totalGroups; i++) {
         try {
@@ -139,11 +138,6 @@ export default function BlockchainVisualizer() {
     ws.onopen = (event) => {
       logMessage(`Connected.`);
       logMessage(`Retrieving blocks...`);
-
-      const payload = {
-        request: { method: "subscribe", arguments: { topics: ["block_data"] } },
-      };
-      ws.send(JSON.stringify(payload));
     };
 
     ws.onmessage = async (event) => {
@@ -238,6 +232,7 @@ export default function BlockchainVisualizer() {
             <Block
               key={block.hash}
               blockData={block}
+              enableHover={displayHoverBlockInfoBox}
               onHover={setHoveredBlock}
             />
           ))}

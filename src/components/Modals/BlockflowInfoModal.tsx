@@ -10,8 +10,6 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { IconExternalLink, IconInfoCircle } from "@tabler/icons-react";
-import isMobile from "is-mobile";
-import clsx from "clsx";
 
 export default function BlockflowInfoModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
