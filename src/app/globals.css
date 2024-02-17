@@ -17,6 +17,8 @@
 }
 
 body {
+  overflow-y: hidden !important;
+  position: relative;
   background: #252525;
   background: linear-gradient(15deg, #101010 0%, #252525 100%);
 }
