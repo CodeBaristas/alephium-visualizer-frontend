@@ -17,12 +17,12 @@ export default function ControlsModal() {
   return (
     <>
       <Button
-        size={"lg"}
-        className={"button"}
+        size={"md"}
+        className={"button hide-mobile"}
         startContent={<IconHelp />}
         onPress={onOpen}
       >
-        <p className={"hide-mobile"}>Controls</p>
+        Controls Desktop
       </Button>
       <Modal size={"3xl"} isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
