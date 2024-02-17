@@ -96,7 +96,7 @@ export default function BlockflowInfoModal() {
                     startContent={<IconExternalLink />}
                     onPress={onClose}
                   >
-                    Deeper, Senpai
+                    Take me deeper!
                   </Button>
                 </Link>
               </ModalFooter>
