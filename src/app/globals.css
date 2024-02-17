@@ -101,15 +101,14 @@ h1 {
 
 }
 .log-box {
+  position: absolute;
   border-radius: 10px;
   font-family: monospace;
-  padding: 20px;
   color: #fff;
   overflow-y: auto; /* Ensure it's scrollable */
   word-wrap: break-word; /* Breaks long words onto the next line */
-  position: absolute; /* Fixed position relative to the viewport */
-  bottom: 20px; /* Align to the bottom of the viewport */
-  right: 20px; /* Align to the right of the viewport */
+  bottom: 0px; /* Align to the bottom of the viewport */
+  right: 0px; /* Align to the right of the viewport */
   width: 600px; /* Set a fixed width */
   max-width: 95%;
   height: 200px; /* Set a fixed height */

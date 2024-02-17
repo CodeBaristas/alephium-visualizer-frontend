@@ -8,14 +8,7 @@ export default function Logbox({ messages }) {
   }, [messages]);
 
   return (
-    <div
-      className="log-box"
-      style={{
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-      }}
-    >
+    <div className="log-box">
       {messages.map((message: string, index: number) => (
         <div key={index}>{message}</div>
       ))}

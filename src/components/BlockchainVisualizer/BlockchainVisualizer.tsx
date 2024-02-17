@@ -198,7 +198,6 @@ export default function BlockchainVisualizer() {
       <Canvas
         shadows
         camera={{ fov: 90, position: [50, 50, 50], near: 0.001 }}
-        style={{ width: "100vw", height: "100vh" }}
         onCreated={(state) => (state.gl.shadowMap.autoUpdate = false)}
       >
         <ambientLight intensity={4} />
