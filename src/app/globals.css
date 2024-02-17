@@ -87,7 +87,7 @@ a:hover {
 
 }
 .log-box {
-  position: absolute;
+  position: fixed;
   border-radius: 10px;
   font-family: monospace;
   color: #fff;
