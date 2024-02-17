@@ -94,6 +94,8 @@ a:hover {
 }
 .log-box {
   position: fixed;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   border-radius: 10px;
   font-family: monospace;
   color: #fff;
@@ -112,6 +114,10 @@ a:hover {
     padding-right: 0.5rem;
 
   }
+}
+
+.padded-message{
+  padding-left: 0.5rem;
 
 }
 

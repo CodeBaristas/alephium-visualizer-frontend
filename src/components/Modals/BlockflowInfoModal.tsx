@@ -27,7 +27,7 @@ export default function BlockflowInfoModal() {
         <p className={"hide-mobile"}>Blockflow</p>
       </Button>
       <Modal
-        placement={"center"}
+        placement={"top-center"}
         size={"3xl"}
         isOpen={isOpen}
         onOpenChange={onOpenChange}

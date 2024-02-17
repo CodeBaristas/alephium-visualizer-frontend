@@ -24,7 +24,7 @@ export default function ControlsModal() {
         Controls Desktop
       </Button>
       <Modal
-        placement={"center"}
+        placement={"top-center"}
         size={"3xl"}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
