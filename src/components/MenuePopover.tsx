@@ -4,17 +4,9 @@ import {
   PopoverTrigger,
   PopoverContent,
   Button,
-  Input,
 } from "@nextui-org/react";
 import { Switch } from "@nextui-org/switch";
-import {
-  IconBrandGithub,
-  IconDoorEnter,
-  IconMenu,
-  IconMessageChatbot,
-} from "@tabler/icons-react";
-import Link from "next/link";
-import { Space } from "lucide-react";
+import { IconMenu } from "@tabler/icons-react";
 
 interface IMenuePopover {
   logBoxState: boolean;

@@ -1,35 +1,42 @@
 "use client";
 
 /* eslint-disable react/no-unknown-property */
-import { Mesh, Vector3 } from "three";
+import { Vector3 } from "three";
 import {
   Dispatch,
   SetStateAction,
   Suspense,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import {
   Environment,
   OrbitControls,
   Line,
-  Html,
-  MeshReflectorMaterial,
-  Text,
   BakeShadows,
   ContactShadows,
 } from "@react-three/drei";
 import { calcCubePosition, calculateSection } from "@/utils/calcPositions";
 import AlephiumModel from "@/components/Models/AlephiumModel";
-import * as THREE from "three";
 import AlphlandModel from "@/components/Models/AlphlandModel";
 
-import { circleRadius, totalChains, totalGroups } from "@/consts";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import {
+  circleRadius,
+  groupColors,
+  heightOffsetDivisor,
+  totalChains,
+  totalGroups,
+} from "@/consts";
+import {
+  Bloom,
+  DepthOfField,
+  EffectComposer,
+  Noise,
+  Vignette,
+} from "@react-three/postprocessing";
 
 import MenuePopver from "@/components/MenuePopover";
 import Link from "next/link";
@@ -37,6 +44,8 @@ import { IconBrandGithub } from "@tabler/icons-react";
 import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
 import { Button } from "@nextui-org/button";
 import Logbox from "@/components/Logbox";
+import ControlsModal from "@/components/Modals/ControlsModal";
+import GlowingRing from "@/components/GlowingRing";
 
 interface IBlockMessage {
   hash: string;
@@ -55,30 +64,6 @@ interface IBlockProps {
   blockData: IBlockMessage;
   onHover: Dispatch<SetStateAction<IBlockMessage | null>>;
 }
-
-interface ILineProps {
-  blockData: IBlockMessage[];
-}
-
-// CONSTANTS
-const groupColors = [
-  "#FF5733", // Orange
-  "#33FF57", // Green
-  "#3357FF", // Blue
-  "#FF33FF", // Pink
-  "#FFC300", // Yellow
-  "#DAF7A6", // Light Green
-  "#C70039", // Dark Red
-  "#581845", // Dark Purple
-  "#FFFFFF", // White
-  "#808000", // Olive
-  "#00FFFF", // Aqua
-  "#FFC0CB", // Pink
-  "#800080", // Purple
-  "#FFFF00", // Yellow
-  "#808080", // Grey
-  "#00FF00", // Lime
-];
 
 // INDIVIDUAL BLOCK
 const Block = (props: IBlockProps) => {
@@ -100,21 +85,6 @@ const Block = (props: IBlockProps) => {
         props.onHover(null);
       }}
     >
-      {/*<meshPhysicalMaterial*/}
-      {/*  attach="material"*/}
-      {/*  transparent={true}*/}
-      {/*  transmission={0.8} // Controls how much light passes through the material*/}
-      {/*  roughness={0} // Smooth surface for glass*/}
-      {/*  reflectivity={0.6} // Adjust based on how reflective your glass should be*/}
-      {/*  clearcoat={1.0} // Adds an additional reflective layer, useful for glass surfaces*/}
-      {/*  ior={1.5} // Index of Refraction, typical for glass*/}
-      {/*  flatShading={true}*/}
-      {/*  color={*/}
-      {/*    groupColors[*/}
-      {/*      calculateSection(props.blockData.chainFrom, props.blockData.chainTo)*/}
-      {/*    ]*/}
-      {/*  }*/}
-      {/*/>*/}
       <meshStandardMaterial
         attach="material"
         color={
@@ -124,71 +94,27 @@ const Block = (props: IBlockProps) => {
         }
       />
       {props.blockData.isLeading ? (
-        <boxGeometry args={[2, 2, 2]} attach="geometry" />
+        <boxGeometry args={[4, 4, 4]} attach="geometry" />
       ) : (
-        <boxGeometry args={[1, 1, 1]} attach="geometry" />
+        <boxGeometry args={[2, 2, 2]} attach="geometry" />
       )}
     </mesh>
   );
 };
 
-// LINES old
-// const lines = useMemo(() => {
-//   let allLines: [Vector3, Vector3][] = [];
-//   blocks.blockData.forEach((block, index) => {
-//     for (let i = 0; i < index; i++) {
-//       const previousBlock = blocks.blockData[i];
-//       if (!isNaN(block.position.x) && !isNaN(previousBlock.position.x)) {
-//         allLines.push([block.position, previousBlock.position]);
-//       } else {
-//         console.warn(
-//           "Invalid position encountered",
-//           block.position,
-//           previousBlock.position,
-//         );
-//       }
-//     }
-//   });
-//   return allLines;
-// }, [blocks]);
-
-const GlowingRing = () => {
-  const meshRef = useRef<Mesh>(null);
-  // Rotate the ring to make it vertical
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = Math.PI / 2;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} position={[0, -10, 0]}>
-      {/* TorusGeometry args: [radius, tubeRadius, radialSegments, tubularSegments] */}
-      <torusGeometry args={[circleRadius + 5, 0.4, 32, 128]} />
-      <meshStandardMaterial
-        emissive="white"
-        emissiveIntensity={1}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  );
-};
-
-const BlockchainVisualizer = () => {
+export default function BlockchainVisualizer() {
   const [hoveredBlock, setHoveredBlock] = useState<IBlockMessage | null>(null);
   const [blocks, setBlocks] = useState<IBlockMessage[]>([]); // State to store block data
   const [lines, setLines] = useState<[Vector3, Vector3][]>([]);
   const [latestBlock, setLatestBlock] = useState<IBlockMessage | null>(null);
-  const [refToLatestMinedBlock, setRefToLatestMinedBlock] = useState();
-  const connectorBlocks2 = useRef<IBlockMessage[][]>([]);
-  const blockCounter = useRef<number>(1);
-  const firstBlockTimestamp = useRef<number>(0);
-
   const [messages, setMessages] = useState<string[]>([]);
   const [displayLogBox, setDisplayLogBox] = useState<boolean>(true);
   const [displayHoverBlockInfoBox, setDisplayHoverBlockInfoBox] =
     useState<boolean>(true);
   const [postProcessing, setPostProcessing] = useState<boolean>(false);
+  const connectorBlocks2 = useRef<IBlockMessage[][]>([]);
+  const blockCounter = useRef<number>(1);
+  const firstBlockTimestamp = useRef<number>(0);
 
   // Function to log messages both to the console and the state
   const logMessage = useCallback((message: string) => {
@@ -196,9 +122,6 @@ const BlockchainVisualizer = () => {
     setMessages((prevMessages) => [...prevMessages, message]); // Add to the messages state
   }, []);
   useEffect(() => {
-    // Assuming blocks[0] is the new block you want to update connectorBlocks2 with.
-    // You might need a way to store this block from the WebSocket event handler to here.
-    // For example, using another state to temporarily hold the new block.
     if (latestBlock) {
       // Ensure newBlock is defined and is the block you want to process.
       connectorBlocks2.current = updateConnectorBlocks(latestBlock);
@@ -255,7 +178,7 @@ const BlockchainVisualizer = () => {
     return allLines;
   };
 
-  //socketIO
+  // socketIO
   // const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_BASE_PATH);
   // useEffect(() => {
   //   // Listen for incoming messages
@@ -278,44 +201,6 @@ const BlockchainVisualizer = () => {
       console.log(JSON.stringify(payload));
       ws.send(JSON.stringify(payload));
     };
-
-    // ws.onmessage = (event) => {
-    //   console.log("lol");
-    //   try {
-    //     const request = JSON.parse(event.data);
-    //     const body = JSON.parse(request?.request?.arguments?.data);
-    //     const call_id = request?.request?.call_id;
-    //     console.log(`request: ${JSON.stringify(request)}`);
-    //     console.log(`body: ${JSON.stringify(body)}`);
-    //     if (body) {
-    //       console.log(JSON.stringify(body));
-    //       const topic = body?.topic?.toString() ?? undefined;
-    //
-    //       console.log(
-    //         `Webhook Challenged Date: ${JSON.stringify(new Date().toISOString())} | topic: ${topic} | Body: ${JSON.stringify(body)}`,
-    //       );
-    //
-    //       try {
-    //         const notify = {
-    //           response: {
-    //             result: "None",
-    //             result_type: "None",
-    //             call_id: call_id,
-    //           },
-    //         };
-    //
-    //         console.log(`NOTIFYING ${JSON.stringify(notify)}`);
-    //         ws?.send(JSON.stringify(notify));
-    //       } catch (ex) {
-    //         console.log(JSON.stringify(ex));
-    //       }
-    //       //send heartbeat
-    //       //this.socketClient.send("heartbeat");
-    //       // }
-    //     }
-    //   } catch (ex) {
-    //     console.log(JSON.stringify(ex));
-    //   }
 
     ws.onmessage = async (event) => {
       const response = JSON.parse(event.data);
@@ -341,7 +226,8 @@ const BlockchainVisualizer = () => {
           }
           console.log(
             "height offset ",
-            (block.timestamp - firstBlockTimestamp.current) / 1000,
+            (block.timestamp - firstBlockTimestamp.current) /
+              heightOffsetDivisor,
           );
           blockCounter.current += 1;
           console.log("timestamp", block.timestamp % 10000);
@@ -350,27 +236,28 @@ const BlockchainVisualizer = () => {
             block.chainTo,
             totalChains,
             circleRadius,
-            (block.timestamp - firstBlockTimestamp.current) / 1000,
+            (block.timestamp - firstBlockTimestamp.current) /
+              heightOffsetDivisor,
           );
-          // answer the rpc
-          const call_id = response?.request?.call_id;
-          console.log("call_id", call_id);
-          console.log(`request: ${JSON.stringify(response)}`);
-
-          try {
-            const notify = {
-              response: {
-                result: "None",
-                result_type: "None",
-                call_id: call_id,
-              },
-            };
-
-            console.log(`NOTIFYING ${JSON.stringify(notify)}`);
-            ws?.send(JSON.stringify(notify));
-          } catch (ex) {
-            console.log(JSON.stringify(ex));
-          }
+          // // answer the rpc
+          // const call_id = response?.request?.call_id;
+          // console.log("call_id", call_id);
+          // console.log(`request: ${JSON.stringify(response)}`);
+          //
+          // try {
+          //   const notify = {
+          //     response: {
+          //       result: "None",
+          //       result_type: "None",
+          //       call_id: call_id,
+          //     },
+          //   };
+          //
+          //   console.log(`NOTIFYING ${JSON.stringify(notify)}`);
+          //   ws?.send(JSON.stringify(notify));
+          // } catch (ex) {
+          //   console.log(JSON.stringify(ex));
+          // }
 
           setLines((prevLines) => {
             const newLines = computeLinesForNewBlock(
@@ -396,7 +283,7 @@ const BlockchainVisualizer = () => {
       <Canvas
         shadows
         dpr={[1, 2]}
-        camera={{ fov: 90, position: [30, 30, 30], near: 0.001 }}
+        camera={{ fov: 90, position: [50, 50, 50], near: 0.001 }}
         style={{ width: "100vw", height: "100vh" }}
         onCreated={(state) => (state.gl.shadowMap.autoUpdate = false)}
       >
@@ -419,9 +306,6 @@ const BlockchainVisualizer = () => {
         />
         <Suspense fallback={null}>
           <GlowingRing />
-          {/*<Frames images={images} />*/}
-          {/*<TutorialTooltip />*/}
-          {/*<MessageLogBox messages={["test"]} />*/}
 
           <AlephiumModel />
           <AlphlandModel />
@@ -501,6 +385,7 @@ const BlockchainVisualizer = () => {
           </Button>
         </Link>
         <BlockflowInfoModal />
+        <ControlsModal />
       </div>
       {displayLogBox && <Logbox messages={messages} />}
       {displayHoverBlockInfoBox && (
@@ -535,6 +420,4 @@ const BlockchainVisualizer = () => {
       )}
     </div>
   );
-};
-
-export default BlockchainVisualizer;
+}
