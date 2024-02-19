@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { totalGroups } from "@/utils/consts";
 
 export function calculateSection(
   groupOrigin: number,
@@ -7,16 +8,16 @@ export function calculateSection(
   // Ensure the inputs are within the expected range
   if (
     groupOrigin < 0 ||
-    groupOrigin > 3 ||
+    groupOrigin >= totalGroups ||
     groupDestination < 0 ||
-    groupDestination > 3
+    groupDestination >= totalGroups
   ) {
     throw new Error(
-      "groupOrigin and groupDestination must be between 0 and 3.",
+      `groupOrigin and groupDestination must be between 0 and ${totalGroups}.`,
     );
   }
   // Calculate the section
-  const section = groupOrigin * 4 + groupDestination;
+  const section = groupOrigin * totalGroups + groupDestination;
   return section;
 }
 function getRandomAngleInSection(
@@ -62,6 +63,5 @@ export function calcCubePosition(
     angle,
     heightOffset,
   );
-  // console.log("new cube position", cubePosition);
   return cubePosition;
 }

@@ -79,7 +79,7 @@ export default function BlockflowInfoModal() {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <Button variant="light" size={"lg"} onPress={onClose}>
+                <Button variant="light" size={"md"} onPress={onClose}>
                   Close
                 </Button>
                 <Link

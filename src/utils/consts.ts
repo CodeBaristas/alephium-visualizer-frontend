@@ -1,5 +1,5 @@
 export const totalChains = 16;
-export const totalGroups = 4;
+export const totalGroups = totalChains / 4;
 export const circleRadius = 50;
 export const heightOffsetDivisor = 4000;
 export const groupColors = [
