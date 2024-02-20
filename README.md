@@ -15,7 +15,11 @@ Dependency example: A new block is mined on chain (3,1). Seven dependencies exis
 
 ## Getting Started
 
-First, run the development server:
+Copy ```.env.example``` to ```.env.local```
+The API is public for now and accessible with ```API_KEY=123456```
+
+
+Run the development server:
 
 ```bash
 npm run dev
