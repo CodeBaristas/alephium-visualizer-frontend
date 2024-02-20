@@ -57,45 +57,44 @@ export interface IBlockMessage {
 }
 
 export default function BlockchainVisualizer() {
-  const [hoveredBlock, setHoveredBlock] = useState<IBlockMessage | null>(null);
-  const [blocks, setBlocks] = useState<IBlockMessage[]>([]); // State to store block data
-  const [lines, setLines] = useState<[Vector3, Vector3][]>([]);
+  // State for blocks, lines between blocks, and UI controls like logs and hover info.
+  const [blocks, setBlocks] = useState<IBlockMessage[]>([]);
   const [latestBlock, setLatestBlock] = useState<IBlockMessage | null>(null);
+  const [hoveredBlock, setHoveredBlock] = useState<IBlockMessage | null>(null);
+  const [lines, setLines] = useState<[Vector3, Vector3][]>([]);
+
+  // Helper states
   const [messages, setMessages] = useState<string[]>([]);
+  const dependencyBlocks = useRef<IBlockMessage[][]>([]);
+  const blockCounter = useRef<number>(1);
+  const firstBlockTimestamp = useRef<number>(0);
+
+  // User settings
   const [displayLogBox, setDisplayLogBox] = useState<boolean>(true);
   const [displayHoverBlockInfoBox, setDisplayHoverBlockInfoBox] =
     useState<boolean>(true);
   const [postProcessing, setPostProcessing] = useState<boolean>(false);
-  const connectorBlocks2 = useRef<IBlockMessage[][]>([]);
-  const blockCounter = useRef<number>(1);
-  const firstBlockTimestamp = useRef<number>(0);
 
-  // Function to log messages both to the console and the state
+  // Function to log messages both to the state and logbox
   const logMessage = useCallback((message: string) => {
-    console.log(message); // Log to the console
-    setMessages((prevMessages) => [...prevMessages, message]); // Add to the messages state
+    setMessages((prevMessages) => [...prevMessages, message]);
   }, []);
   useEffect(() => {
     if (latestBlock) {
-      // Ensure newBlock is defined and is the block you want to process.
-      connectorBlocks2.current = updateConnectorBlocks(latestBlock);
+      dependencyBlocks.current = updateDependencyBlocks(latestBlock);
     }
-  }, [lines]); // This effect depends on `lines`, so it runs after `lines` are updated.
-  const updateConnectorBlocks = (newBlock: IBlockMessage) => {
-    // Create a deep copy of the currentBlocks to avoid direct state mutation
-    let updatedBlocks = connectorBlocks2.current.map((innerArray) =>
+  }, [lines]);
+
+  const updateDependencyBlocks = (newBlock: IBlockMessage) => {
+    let updatedBlocks = dependencyBlocks.current.map((innerArray) =>
       innerArray.slice(),
     );
-    // Make sure a new block exists
     if (!newBlock) {
       return updatedBlocks;
     }
-    // Ensure the 'fromGroup' array exists
     if (!updatedBlocks[newBlock.chainFrom]) {
       updatedBlocks[newBlock.chainFrom] = [];
     }
-
-    // Directly modify the entry with the new block data
     updatedBlocks[newBlock.chainFrom][newBlock.chainTo] = newBlock;
     console.log(updatedBlocks);
     return updatedBlocks;
@@ -142,7 +141,6 @@ export default function BlockchainVisualizer() {
 
     ws.onmessage = async (event) => {
       const response = JSON.parse(event.data);
-
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
           const block: IBlockMessage = response.request.arguments.data;
@@ -150,8 +148,6 @@ export default function BlockchainVisualizer() {
           if (block.chainFrom === block.chainTo) {
             block.isLeading = true;
           }
-
-          // Calculate block position
           logMessage(
             `(${blockCounter.current}) New ${block.isLeading ? "leading" : ""} block found (${block.chainFrom} -> ${block.chainTo}): ${block.hash}`,
           );
@@ -161,6 +157,8 @@ export default function BlockchainVisualizer() {
             firstBlockTimestamp.current = block.timestamp;
           }
           blockCounter.current += 1;
+
+          // Calculate position for the new Block
           block.position = calcCubePosition(
             block.chainFrom,
             block.chainTo,
@@ -170,10 +168,11 @@ export default function BlockchainVisualizer() {
               heightOffsetDivisor,
           );
 
+          // Set the dependency lines
           setLines((prevLines) => {
             const newLines = computeLinesForNewBlock(
               block,
-              connectorBlocks2.current,
+              dependencyBlocks.current,
             );
             return [...prevLines, ...newLines];
           });
@@ -182,6 +181,8 @@ export default function BlockchainVisualizer() {
         }
       }
     };
+
+    // Cleanup
     return () => {
       ws.close();
     };
@@ -213,7 +214,6 @@ export default function BlockchainVisualizer() {
         />
         <Suspense fallback={null}>
           <GlowingRing />
-
           <AlephiumModel />
           <AlphlandModel />
           <ContactShadows
@@ -253,6 +253,7 @@ export default function BlockchainVisualizer() {
           </EffectComposer>
         )}
       </Canvas>
+
       <div
         style={{
           position: "absolute",

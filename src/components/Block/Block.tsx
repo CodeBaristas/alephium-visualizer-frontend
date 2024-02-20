@@ -1,5 +1,5 @@
 // INDIVIDUAL BLOCK
-import { groupColors } from "@/utils/consts";
+import { chainColors } from "@/utils/consts";
 import { calculateSection } from "@/utils/calcPositions";
 import { Dispatch, SetStateAction } from "react";
 import { IBlockMessage } from "@/components/BlockchainVisualizer/BlockchainVisualizer";
@@ -36,7 +36,7 @@ export default function Block({
       <meshStandardMaterial
         attach="material"
         color={
-          groupColors[calculateSection(blockData.chainFrom, blockData.chainTo)]
+          chainColors[calculateSection(blockData.chainFrom, blockData.chainTo)]
         }
       />
       {blockData.isLeading ? (

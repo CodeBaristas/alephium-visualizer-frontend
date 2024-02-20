@@ -2,7 +2,7 @@ export const totalChains = 16;
 export const totalGroups = totalChains / 4;
 export const circleRadius = 50;
 export const heightOffsetDivisor = 4000;
-export const groupColors = [
+export const chainColors = [
   "#FF5733", // Orange
   "#33FF57", // Green
   "#3357FF", // Blue
