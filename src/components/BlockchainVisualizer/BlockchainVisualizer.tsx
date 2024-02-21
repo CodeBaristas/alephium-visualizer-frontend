@@ -33,9 +33,6 @@ import {
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 import CustomizePopover from "@/components/CustomizePopover/CustomizePopover";
-import Link from "next/link";
-import { Button } from "@nextui-org/button";
-import { IconBrandGithub } from "@tabler/icons-react";
 import Logbox from "@/components/Logbox/Logbox";
 import GlowingRing from "@/components/GlowingRing/GlowingRing";
 import BlockflowInfoModal from "@/components/Modals/BlockflowInfoModal";
@@ -97,7 +94,6 @@ export default function BlockchainVisualizer() {
       updatedBlocks[newBlock.chainFrom] = [];
     }
     updatedBlocks[newBlock.chainFrom][newBlock.chainTo] = newBlock;
-    console.log(updatedBlocks);
     return updatedBlocks;
   };
 
@@ -111,8 +107,6 @@ export default function BlockchainVisualizer() {
       if (connectorBlocks.at(newBlock.chainFrom)) {
         if (connectorBlocks.at(newBlock.chainFrom)) {
           connectorBlocks.at(newBlock.chainFrom).forEach((connectorBlock) => {
-            console.log(newBlock.hash);
-            console.log(connectorBlock.hash);
             allLines.push([newBlock.position, connectorBlock.position]);
           });
         }
