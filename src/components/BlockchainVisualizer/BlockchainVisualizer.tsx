@@ -79,6 +79,7 @@ export default function BlockchainVisualizer() {
   const logMessage = useCallback((message: string) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   }, []);
+
   useEffect(() => {
     if (latestBlock) {
       dependencyBlocks.current = updateDependencyBlocks(latestBlock);
@@ -139,7 +140,7 @@ export default function BlockchainVisualizer() {
       logMessage(`Retrieving blocks...`);
     };
 
-    ws.onmessage = async (event) => {
+    ws.onmessage = (event) => {
       const response = JSON.parse(event.data);
       if (response?.request !== null) {
         if (response.request.arguments?.data) {
