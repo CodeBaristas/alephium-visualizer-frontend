@@ -93,7 +93,19 @@ export default function BlockchainVisualizer() {
     if (!updatedBlocks[newBlock.chainFrom]) {
       updatedBlocks[newBlock.chainFrom] = [];
     }
-    updatedBlocks[newBlock.chainFrom][newBlock.chainTo] = newBlock;
+
+    // FIXME/OUTLOOK:
+    // Update dependency blocks only when the height of a newly minted block exceeds the height of the previous block.
+    // This precaution is necessary because the explorer may display new blocks with a lower height shortly after a block with a higher height has been shown.
+    // To address this issue, either the explorer needs to ensure that data is presented in chronological order, or an alternative solution could involve buffering blocks until their chronological sequence is confirmed.
+
+    if (
+      newBlock.height >
+        updatedBlocks[newBlock.chainFrom][newBlock.chainTo]?.height ||
+      updatedBlocks[newBlock.chainFrom][newBlock.chainTo] === undefined
+    ) {
+      updatedBlocks[newBlock.chainFrom][newBlock.chainTo] = newBlock;
+    }
     return updatedBlocks;
   };
 
